@@ -1,0 +1,126 @@
+# Robomaze Arduino Code
+
+
+#include <NewPing.h> // Include t9he NewPing library for ultrasonic sensors
+
+#define TRIGGER_PIN_FRONT 12 // Front ultrasonic sensor trigger pin
+#define ECHO_PIN_FRONT 13    // Front ultrasonic sensor echo pin
+#define TRIGGER_PIN_LEFT 7  // Left ultrasonic sensor trigger pin
+#define ECHO_PIN_LEFT 8     // Left ultrasonic sensor echo pin
+#define TRIGGER_PIN_RIGHT 2 // Right ultrasonic sensor trigger pin
+#define ECHO_PIN_RIGHT 4    // Right ultrasonic sensor echo pin
+
+#define ENA 10   // Motor 1 speed control (PWM)
+#define IN1 3    // Motor Right Forward
+#define IN2 5    // Motor Right Backward
+#define ENB 11   // Motor 2 speed control (PWM)
+#define IN3 9    // Motor Left Forward
+#define IN4 6    // Motor Left Backward
+#define MAX_DIST 20 // Maximum distance to consider for obstacle avoidance
+#define Speed 100
+NewPing sonarFront(TRIGGER_PIN_FRONT, ECHO_PIN_FRONT); // Front ultrasonic sensor instance
+NewPing sonarLeft(TRIGGER_PIN_LEFT, ECHO_PIN_LEFT);   // Left ultrasonic sensor instance
+NewPing sonarRight(TRIGGER_PIN_RIGHT, ECHO_PIN_RIGHT); // Right ultrasonic sensor instance
+
+void setup() {
+  pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  int distanceFront = sonarFront.ping_cm();
+  int distanceLeft = sonarLeft.ping_cm();
+  int distanceRight = sonarRight.ping_cm();
+  Serial.print("distanceFront : ");
+  Serial.print(distanceFront);
+  Serial.println(" cm");
+ 
+  Serial.print("distanceLeft : ");
+  Serial.print(distanceLeft);
+  Serial.println(" cm");
+  
+  Serial.print("distanceRight : ");
+  Serial.print(distanceRight);
+  Serial.println(" cm");
+  //delay(1000);
+  if (distanceFront > 20 && (distanceLeft > ){
+     moveForward();}
+  // Forward if no obstacle ahead 
+  else if (distanceFront < 20) {
+    Stop();
+    if (distanceLeft<distanceRight){
+    turnRight();}
+    else{
+      turnLeft();}
+  
+  } //else {
+    // If obstacle detected, choose the direction with more space
+   /* if (distanceLeft > distanceRight) {
+      Stop();
+      turnLeft();
+      Stop();
+    } else {
+      Stop();
+      turnRight();
+      Stop();
+    }*/
+ // }
+}
+
+void moveForward() {
+  analogWrite(IN1, 50);
+  analogWrite(IN2, 0);
+  analogWrite(IN3, 50);
+  analogWrite(IN4, 0);
+  analogWrite(ENA, Speed);
+  analogWrite(ENB, Speed);
+}
+
+void turnLeft() {
+  digitalWrite(IN1,HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  analogWrite(ENA, Speed);
+  analogWrite(ENB, Speed);
+  delay(2); // Adjust delay based on the required turning angle
+}
+
+void SmallTurnRight(){
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  delayMicroseconds(10); // Adjust delay based on the required turning angle
+}
+
+void SmallTurnLeft(){
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  delayMicroseconds(10); // Adjust delay based on the required turning angle
+}
+
+void turnRight() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENA, Speed);
+  analogWrite(ENB, Speed);
+  delay(2); // Adjust delay based on the required turning angle
+}
+
+void Stop(){
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  delay(50);}
